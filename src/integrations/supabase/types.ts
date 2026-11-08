@@ -40,6 +40,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          bio: string | null
           company_name: string | null
           created_at: string
           district: string | null
@@ -49,9 +50,12 @@ export type Database = {
           phone: string | null
           registration_number: string | null
           service_districts: string[] | null
+          verification_doc: string | null
+          verification_status: string
           verified: boolean
         }
         Insert: {
+          bio?: string | null
           company_name?: string | null
           created_at?: string
           district?: string | null
@@ -61,9 +65,12 @@ export type Database = {
           phone?: string | null
           registration_number?: string | null
           service_districts?: string[] | null
+          verification_doc?: string | null
+          verification_status?: string
           verified?: boolean
         }
         Update: {
+          bio?: string | null
           company_name?: string | null
           created_at?: string
           district?: string | null
@@ -73,6 +80,8 @@ export type Database = {
           phone?: string | null
           registration_number?: string | null
           service_districts?: string[] | null
+          verification_doc?: string | null
+          verification_status?: string
           verified?: boolean
         }
         Relationships: []
@@ -81,6 +90,7 @@ export type Database = {
         Row: {
           created_at: string
           estimate: Json | null
+          files: string[]
           finishes: Json
           id: string
           land: Json
@@ -95,6 +105,7 @@ export type Database = {
         Insert: {
           created_at?: string
           estimate?: Json | null
+          files?: string[]
           finishes?: Json
           id?: string
           land?: Json
@@ -109,6 +120,7 @@ export type Database = {
         Update: {
           created_at?: string
           estimate?: Json | null
+          files?: string[]
           finishes?: Json
           id?: string
           land?: Json
