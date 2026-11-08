@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type PointerEvent as RPE } from "react";
 import type { Land, Plan, Room } from "@/lib/buildora/types";
 import { buildableRect, ROOM_CATALOG, overlaps } from "@/lib/buildora/planner";
 import { fmt, mToFt } from "@/lib/buildora/units";
@@ -38,7 +38,7 @@ export function PlanView({ plan, land, floor, unit = "m", selected, onSelect, on
   const b = buildableRect(land);
   const d = (m: number) => (unit === "ft" ? `${fmt(mToFt(m), 1)}'` : `${fmt(m, 1)}m`);
 
-  const pt = (e: React.PointerEvent) => {
+  const pt = (e: RPE) => {
     const s = svg.current!;
     const p = s.createSVGPoint();
     p.x = e.clientX; p.y = e.clientY;
@@ -46,7 +46,7 @@ export function PlanView({ plan, land, floor, unit = "m", selected, onSelect, on
     return { x: t.x, y: t.y };
   };
 
-  const down = (e: React.PointerEvent, r: Room, mode: "move" | "resize") => {
+  const down = (e: RPE, r: Room, mode: "move" | "resize") => {
     onSelect?.(r.id);
     if (!editable) return;
     e.stopPropagation();
@@ -54,7 +54,7 @@ export function PlanView({ plan, land, floor, unit = "m", selected, onSelect, on
     const p = pt(e);
     setDrag({ id: r.id, mode, ox: p.x, oy: p.y, r: { ...r } });
   };
-  const move = (e: React.PointerEvent) => {
+  const move = (e: RPE) => {
     if (!drag || !onChange) return;
     const p = pt(e);
     const dx = p.x - drag.ox, dy = p.y - drag.oy;
