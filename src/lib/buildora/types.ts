@@ -59,6 +59,9 @@ export interface Plan {
 export interface Finishes {
   level: "standard" | "premium" | "luxury";
   wall: string;
+  interiorWall?: string;
+  furniture?: boolean;
+  floorMaterial?: "wood" | "tile";
   roof: string;
   floor: string;
   roofType: "flat" | "pitched";

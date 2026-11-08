@@ -104,6 +104,23 @@
   --plan-private: oklch(0.95 0.025 80);
   --plan-service: oklch(0.94 0.015 250);
   --plan-core: oklch(0.9 0.01 95);
+  --viewer-background: oklch(0.96 0.01 180);
+  --viewer-glass: color-mix(in oklab, var(--card) 78%, transparent);
+  --viewer-shadow: 0 8px 32px color-mix(in oklab, var(--foreground) 10%, transparent);
+  --scene-background: #edf2f0;
+  --scene-ground: #a3b49a;
+  --scene-road: #737b7c;
+  --scene-slab: #c4c8c4;
+  --scene-window: #a4d2da;
+  --scene-frame: #fcfcfa;
+  --scene-wood: #b99a77;
+  --scene-tile: #d7dbd8;
+  --paint-ivory: #f3efe6;
+  --paint-white: #ffffff;
+  --paint-sage: #aebfad;
+  --paint-mist: #c4d5df;
+  --paint-clay: #d9b4a3;
+  --paint-graphite: #4c545b;
 }
 
 @layer base {
@@ -119,6 +136,12 @@
 
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility shadow-lift { box-shadow: var(--shadow-lift); }
+@utility viewer-glass {
+  background: var(--viewer-glass);
+  backdrop-filter: blur(20px) saturate(130%);
+  border: 1px solid var(--border);
+  box-shadow: var(--viewer-shadow);
+}
 @utility bg-hero-overlay { background-image: var(--gradient-hero); }
 @utility bg-emerald-gradient { background-image: var(--gradient-emerald); }
 @utility blueprint-grid {
