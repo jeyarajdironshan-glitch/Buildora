@@ -32,7 +32,7 @@ const schema = z.object({
 function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [busy, setBusy] = useState(false);
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     const p = schema.safeParse(form);
     if (!p.success) return toast.error(p.error.issues[0].message);
