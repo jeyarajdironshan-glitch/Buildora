@@ -6,7 +6,7 @@ const counts = (keys: string[]) => z.object(Object.fromEntries(keys.map((k) => [
 
 const BriefSchema = z.object({
   floors: z.number().int().min(1).max(3),
-  style: z.string(),
+  style: z.enum(["Modern tropical", "Contemporary", "Minimalist", "Colonial", "Traditional Sri Lankan"]),
   budget: z.number().nullable(),
   ground: counts(["living", "dining", "kitchen", "bedroom", "bathroom", "parking", "staircase", "store", "guest", "study"]),
   upper: counts(["master", "bedroom", "attached_bath", "family", "balcony", "study", "prayer", "laundry"]),
@@ -35,7 +35,7 @@ export const parseBrief = createServerFn({ method: "POST" })
       const result = streamText({
         model: provider.responses("openai/gpt-6-astra"),
         instructions:
-          "You are an architectural planning assistant for Sri Lankan homes. Convert the customer's description into a structured house brief. Ground floor counts use the ground keys; upper floor counts use the upper keys (all zero if single storey). Include a staircase (1) when floors > 1. Budget in LKR (convert 'lakhs' = 100,000 and 'million'), null if not stated. summary: one sentence restating the brief.",
+          "You are an architectural planning assistant for Sri Lankan homes. Convert the customer's description into a structured house brief. Ground floor counts use the ground keys; upper floor counts use the upper keys (all zero if single storey). Include a staircase (1) when floors > 1. Budget in LKR (convert 'lakhs' = 100,000 and 'million'), null if not stated. Always include sensible essentials the customer did not exclude: ground floor living 1, dining 1, kitchen 1, bathroom at least 1; upper floors need at least 1 bathroom or attached bath per 2 bedrooms. Default style Modern tropical. summary: one sentence restating the brief.",
         messages: [{ role: "user", content: data.text }],
         output: Output.object({ schema: BriefSchema }),
         providerOptions: {
