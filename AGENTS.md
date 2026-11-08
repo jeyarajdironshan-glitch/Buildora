@@ -35,3 +35,4 @@ use the editor.
 - Canonical geometry is stored in metres; feet/perches are display conversions only.
 - Roles live in `user_roles` (customer/company/admin); signup trigger only ever assigns customer or company. Admins are granted manually in the database.
 - Project data (land, requirements, plans, finishes, estimate) is JSONB on `projects`; quotations insert is gated by RLS to verified companies on published projects.
+- House visualization geometry and storey changes live in `src/lib/buildora/viewer.ts`; scene rendering and finish controls remain separate so edited rooms and saved customer choices are preserved.
