@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,7 +109,7 @@ export function SiteFooter() {
   );
 }
 
-export function PublicPage({ title, kicker, children }: { title: string; kicker?: string; children: React.ReactNode }) {
+export function PublicPage({ title, kicker, children }: { title: string; kicker?: string; children: ReactNode }) {
   return (
     <div className="min-h-screen">
       <SiteHeader />
