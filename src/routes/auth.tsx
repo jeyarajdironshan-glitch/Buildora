@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { MailCheck } from "lucide-react";
@@ -205,6 +205,6 @@ function AuthPage() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return <div className="grid gap-1.5"><Label>{label}</Label>{children}</div>;
 }
