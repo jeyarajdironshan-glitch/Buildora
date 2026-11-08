@@ -136,7 +136,7 @@ export function generatePlans(land: Land, req: Requirements): Plan[] {
       treemap(sorted.slice(0, k), sideA, out);
       treemap(sorted.slice(k), sideB, out);
       out.push({ type: "staircase", name: floor === 0 ? "Stairs & Hall" : "Stairs & Landing", ...core });
-      out.forEach((o, i) => rooms.push({ ...o, x: r1(o.x), y: r1(o.y), w: r1(o.w), h: r1(o.h), floor, id: `f${floor}-${vi}-${i}` }));
+      out.forEach((o, i) => { const x = r1(o.x), y = r1(o.y); rooms.push({ ...o, x, y, w: r1(r1(o.x + o.w) - x), h: r1(r1(o.y + o.h) - y), floor, id: `f${floor}-${vi}-${i}` }); });
     };
     place(groundItems, 0);
     for (let f = 1; f < floors; f++) place(upperItems, f);

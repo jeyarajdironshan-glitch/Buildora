@@ -28,3 +28,10 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- TypeScript strictness: `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noPropertyAccessFromIndexSignature` and `noImplicitReturns` are off — keeps form/plan geometry code readable; `strict` stays on.
+- Buildora domain logic (planner, cost, units) lives in `src/lib/buildora/` as plain TS with no React — UI only renders its output and it is unit-tested.
+- Canonical geometry is stored in metres; feet/perches are display conversions only.
+- Roles live in `user_roles` (customer/company/admin); signup trigger only ever assigns customer or company. Admins are granted manually in the database.
+- Project data (land, requirements, plans, finishes, estimate) is JSONB on `projects`; quotations insert is gated by RLS to verified companies on published projects.
