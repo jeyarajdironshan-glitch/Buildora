@@ -1,0 +1,2 @@
+# Furniture
+Bed, sofa, table, chair, sink, stove, toilet, desk, plant, coffee table and shower: Kenney Furniture Pack 1.0, CC0. Source: https://opengameart.org/content/furniture-kit . Converted from the original OBJ/MTL models to GLB.
