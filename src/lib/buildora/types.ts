@@ -105,7 +105,7 @@ export const DEFAULT_FINISHES: Finishes = {
   wall: "#f3efe6",
   roof: "#5b4636",
   floor: "#d9cbb2",
-  roofType: "pitched",
+  roofType: "flat",
 };
 
 export const DISTRICTS = [

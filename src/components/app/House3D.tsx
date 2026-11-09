@@ -6,6 +6,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Home, Layers, Eye, Play, Pause, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HouseFurniture } from "./HouseFurniture";
+import { ModernFacade } from "./ModernFacade";
 import { wallEdges } from "@/lib/buildora/viewer";
 import type { Finishes, Land, Plan, Room } from "@/lib/buildora/types";
 
@@ -15,7 +16,7 @@ function useScenePalette() {
   const [palette, setPalette] = useState<Record<string, string>>({});
   useEffect(() => {
     const css = getComputedStyle(document.documentElement);
-    setPalette(Object.fromEntries(["background", "ground", "road", "slab", "window", "frame", "wood", "tile"].map(k => [k, css.getPropertyValue(`--scene-${k}`).trim()])));
+    setPalette(Object.fromEntries(["background", "ground", "road", "slab", "window", "frame", "wood", "tile", "cladding", "stone", "hedge", "paving", "metal"].map(k => [k, css.getPropertyValue(`--scene-${k}`).trim()])));
   }, []);
   return palette;
 }
@@ -49,7 +50,7 @@ function CameraRig({ plan, view, room, reset, animate, ready }: { plan: Plan; vi
     } else {
       c.target.set(0, view === "exterior" ? plan.floors * H / 2 : 0, 0);
       const exteriorScale = view === "exterior" ? 1.5 + plan.floors * 0.12 : 1;
-      camera.position.set(span * 0.72 * fit * exteriorScale, span * (view === "exterior" ? 0.85 : 1.3) * fit * exteriorScale, span * 0.9 * fit * exteriorScale);
+      camera.position.set(span * 0.72 * fit * exteriorScale, span * (view === "exterior" ? 0.85 : 1.3) * fit * exteriorScale, span * 0.9 * fit * exteriorScale * (view === "exterior" ? -1 : 1));
     }
     camera.lookAt(c.target); c.update();
   }, [camera, fp, view, room, reset, plan.floors, size.width, size.height]);
@@ -59,7 +60,7 @@ function CameraRig({ plan, view, room, reset, animate, ready }: { plan: Plan; vi
 }
 
 export function House3D({ plan, land, finishes }: { plan: Plan; land: Land; finishes: Finishes }) {
-  const [view, setView] = useState<View>("cutaway");
+  const [view, setView] = useState<View>("exterior");
   const [floor, setFloor] = useState(0), [selected, setSelected] = useState("");
   const [animate, setAnimate] = useState(false), [reset, setReset] = useState(0), [ready, setReady] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -105,6 +106,7 @@ export function House3D({ plan, land, finishes }: { plan: Plan; land: Land; fini
               </group>;
             })}
           </group>)}
+          {!cut && <ModernFacade plan={plan} land={land} finishes={finishes} palette={palette} />}
           {!cut && (finishes.roofType === "flat" ? <mesh position={[fp.x + fp.w / 2, plan.floors * H + 0.15, fp.y + fp.h / 2]} castShadow><boxGeometry args={[fp.w + 0.8, 0.25, fp.h + 0.8]} /><meshStandardMaterial color={finishes.roof} /></mesh> : <mesh position={[fp.x + fp.w / 2, plan.floors * H + 0.9, fp.y + fp.h / 2]} rotation-y={Math.PI / 4} scale={[(fp.w + 1) / Math.SQRT2, 1, (fp.h + 1) / Math.SQRT2]} castShadow><coneGeometry args={[1, 1.8, 4]} /><meshStandardMaterial color={finishes.roof} roughness={0.85} /></mesh>)}
         </group>
         <CameraRig plan={plan} view={view} room={room} reset={reset} animate={animate && !reduced} ready={() => setReady(true)} />
