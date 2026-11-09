@@ -36,20 +36,23 @@ function FloorMaterial({ colour, tile }: { colour: string; tile: boolean }) {
 }
 function CameraRig({ plan, view, room, reset, animate, ready }: { plan: Plan; view: View; room?: Room; reset: number; animate: boolean; ready: () => void }) {
   const controls = useRef<OrbitControlsImpl>(null);
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const fp = plan.footprint;
   useEffect(() => {
     const c = controls.current; if (!c) return;
     const span = Math.max(fp.w, fp.h);
+    const aspect = size.width / size.height;
+    const fit = Math.max(1, 1 / aspect);
     if (view === "room" && room) {
       c.target.set(room.x + room.w / 2 - fp.x - fp.w / 2, 1.4, room.y + room.h / 2 - fp.y - fp.h / 2);
-      camera.position.copy(c.target).add(new Vector3(room.w * 0.25, 0.3, room.h * 0.3));
+      camera.position.copy(c.target).add(new Vector3(room.w * 0.38, 0.45, room.h * 0.38));
     } else {
       c.target.set(0, view === "exterior" ? plan.floors * H / 2 : 0, 0);
-      camera.position.set(span * 0.72, span * (view === "exterior" ? 0.85 : 1.3), span * 0.9);
+      const exteriorScale = view === "exterior" ? 1.5 + plan.floors * 0.12 : 1;
+      camera.position.set(span * 0.72 * fit * exteriorScale, span * (view === "exterior" ? 0.85 : 1.3) * fit * exteriorScale, span * 0.9 * fit * exteriorScale);
     }
     camera.lookAt(c.target); c.update();
-  }, [camera, fp, view, room, reset, plan.floors]);
+  }, [camera, fp, view, room, reset, plan.floors, size.width, size.height]);
   const signalled = useRef(false);
   useFrame(() => { if (!signalled.current) { signalled.current = true; ready(); } });
   return <OrbitControls ref={controls} makeDefault enableDamping autoRotate={animate && view !== "room"} autoRotateSpeed={0.45} minDistance={view === "room" ? 0.3 : 5} maxDistance={100} maxPolarAngle={Math.PI / 2.02} />;
