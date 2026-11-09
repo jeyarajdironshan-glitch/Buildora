@@ -15,7 +15,7 @@ import { CompanyMarket } from "@/components/app/CompanyMarket";
 import { AdminPanel } from "@/components/app/AdminPanel";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard – Buildora" }, { name: "description", content: "Your Buildora workspace." }] }),
+  head: () => ({ meta: [{ title: "Dashboard – Buildora" }, { name: "description", content: "Your Buildora workspace." }, { property: "og:title", content: "Dashboard – Buildora" }, { property: "og:description", content: "Manage your house projects and construction quotations." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Dashboard,
 });
 
