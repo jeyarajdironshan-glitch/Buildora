@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app/AppShell";
 import { PlanView } from "@/components/app/PlanEditor";
 import { House3D } from "@/components/app/House3D";
+import { HouseFinishes } from "@/components/app/HouseFinishes";
+import { resizePlanFloors } from "@/lib/buildora/viewer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -25,7 +27,7 @@ import { fmt, ftToM, lkr, mToFt, sqmToPerch, sqmToSqft } from "@/lib/buildora/un
 import { parseBrief } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/_authenticated/projects/$id")({
-  head: () => ({ meta: [{ title: "Project – Buildora" }, { name: "description", content: "Design your house with Buildora." }] }),
+  head: () => ({ meta: [{ title: "House design studio – Buildora" }, { name: "description", content: "Design floor plans, explore furnished interiors and choose your home finishes with Buildora." }, { property: "og:title", content: "House design studio – Buildora" }, { property: "og:description", content: "Explore your house plans, furnished 3D interiors and finishes." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Workspace,
 });
 
@@ -344,29 +346,13 @@ function EditStep({ p, plan, update }: StepProps & { plan: Plan }) {
   );
 }
 
-const SWATCH = {
-  wall: ["#f3efe6", "#e8e2d4", "#ffffff", "#c9c2b4", "#d8c7a8"],
-  roof: ["#5b4636", "#8a3b2a", "#3a3f45", "#6b6f72"],
-  floor: ["#d9cbb2", "#b48a5f", "#e6e2da", "#8c8c88"],
-};
-
 function ThreeStep({ p, plan, update }: StepProps & { plan: Plan }) {
   const f = p.finishes;
   const set = (patch: Partial<Finishes>) => update({ finishes: { ...f, ...patch } });
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_250px]">
       <House3D plan={plan} land={p.land} finishes={f} />
-      <Card className="grid content-start gap-4">
-        <h3 className="font-bold">Exterior & interior</h3>
-        {(["wall", "roof", "floor"] as const).map((k) => (
-          <F key={k} label={{ wall: "Wall colour", roof: "Roof", floor: "Floor finish" }[k]}>
-            <div className="flex gap-2">{SWATCH[k].map((c) => <button key={c} aria-label={c} onClick={() => set({ [k]: c })} className={`size-8 rounded-full border-2 ${f[k] === c ? "border-primary" : "border-transparent"}`} style={{ background: c }} />)}</div>
-          </F>
-        ))}
-        <F label="Roof type"><Sel value={f.roofType} onChange={(v) => set({ roofType: v as Finishes["roofType"] })} options={[["pitched", "Pitched (tiled)"], ["flat", "Flat slab"]]} /></F>
-        <F label="Finish level"><Sel value={f.level} onChange={(v) => set({ level: v as Finishes["level"] })} options={[["standard", "Standard"], ["premium", "Premium"], ["luxury", "Luxury"]]} /></F>
-        <p className="text-xs text-muted-foreground">Drag to orbit, scroll to zoom. The 3D model rebuilds from your 2D plan.</p>
-      </Card>
+      <HouseFinishes finishes={f} onChange={set} floors={plan.floors} onFloors={count => update({ requirements: { ...p.requirements, floors: count }, plans: p.plans.map(pl => resizePlanFloors(pl, count)) })} />
     </div>
   );
 }
