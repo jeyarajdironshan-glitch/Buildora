@@ -27,8 +27,10 @@ export function ModernFacade({ plan, land, finishes, palette }: { plan: Plan; la
     <Box p={[fp.x + fp.w * 0.18, top / 2 + 0.1, front - 0.12]} s={[fp.w * 0.34, top - 0.2, 0.12]} c={palette["cladding"]} r={0.7} />
     <Box p={[fp.x + fp.w - 0.15, top / 2 + 0.1, front - 0.15]} s={[0.45, top + 0.3, 0.45]} c={palette["stone"]} r={0.9} />
     {/* roof canopy */}
+    {finishes.roofType === "flat" && <>
     <Box p={[cx + 0.3, top + 0.35, front + fp.h / 2 - 0.7]} s={[fp.w + 1.2, 0.22, fp.h + 1.9]} c={palette["frame"]} r={0.6} />
     <Box p={[cx + 0.3, top + 0.22, front + fp.h / 2 - 0.7]} s={[fp.w + 1, 0.05, fp.h + 1.7]} c={palette["cladding"]} />
+    </>}
     {/* boundary wall + sliding wooden gate */}
     <Box p={[(land.width - gateW - 1) / 2, 0.6, 0.15]} s={[land.width - gateW - 1, 1.2, 0.2]} c={finishes.wall} />
     <Box p={[land.width - 0.4, 0.6, 0.15]} s={[0.8, 1.2, 0.2]} c={palette["stone"]} />

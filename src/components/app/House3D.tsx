@@ -50,7 +50,7 @@ function CameraRig({ plan, view, room, reset, animate, ready }: { plan: Plan; vi
     } else {
       c.target.set(0, view === "exterior" ? plan.floors * H / 2 : 0, 0);
       const exteriorScale = view === "exterior" ? 1.5 + plan.floors * 0.12 : 1;
-      camera.position.set(span * 0.72 * fit * exteriorScale, span * (view === "exterior" ? 0.85 : 1.3) * fit * exteriorScale, span * 0.9 * fit * exteriorScale);
+      camera.position.set(span * 0.72 * fit * exteriorScale, span * (view === "exterior" ? 0.85 : 1.3) * fit * exteriorScale, span * 0.9 * fit * exteriorScale * (view === "exterior" ? -1 : 1));
     }
     camera.lookAt(c.target); c.update();
   }, [camera, fp, view, room, reset, plan.floors, size.width, size.height]);
