@@ -86,7 +86,7 @@ function Workspace() {
         <TabsContent value="land" className="mt-6"><LandStep p={p} update={update} next={() => setTab("req")} /></TabsContent>
         <TabsContent value="req" className="mt-6"><ReqStep p={p} update={update} next={() => { update({ plans: generatePlans(p.land, p.requirements), selected_plan: null }); setTab("plans"); }} /></TabsContent>
         <TabsContent value="plans" className="mt-6"><PlansStep p={p} update={update} next={() => setTab("3d")} /></TabsContent>
-        <TabsContent value="edit" className="mt-6">{plan && <EditStep p={p} plan={plan} update={update} />}</TabsContent>
+        <TabsContent value="edit" className="mt-6">{plan && <EditStep p={p} plan={plan} update={update} next={() => setTab("3d")} />}</TabsContent>
         <TabsContent value="3d" className="mt-6">{plan && <ThreeStep p={p} plan={plan} update={update} onEdit2D={() => setTab("edit")} />}</TabsContent>
         <TabsContent value="cost" className="mt-6">{est && <CostStep est={est} p={p} />}</TabsContent>
         <TabsContent value="publish" className="mt-6"><PublishStep p={p} save={save} setStatus={(s) => setP({ ...p, status: s })} /></TabsContent>
@@ -298,7 +298,7 @@ function PlansStep({ p, update, next }: StepProps) {
   );
 }
 
-function EditStep({ p, plan, update }: StepProps & { plan: Plan }) {
+function EditStep({ p, plan, update, next }: StepProps & { plan: Plan; next: () => void }) {
   const [floor, setFloor] = useState(0);
   const [sel, setSel] = useState<string | null>(null);
   const [unit, setUnit] = useState<"m" | "ft">("m");
@@ -319,6 +319,7 @@ function EditStep({ p, plan, update }: StepProps & { plan: Plan }) {
           <div className="ml-auto flex gap-2">
             <Button size="sm" variant="outline" onClick={() => setUnit(unit === "m" ? "ft" : "m")}>Units: {unit}</Button>
             <Button size="sm" variant="outline" onClick={add}><Plus /> Room</Button>
+            <Button size="sm" onClick={next}>View in 3D</Button>
           </div>
         </div>
         <PlanView plan={plan} land={p.land} floor={floor} unit={unit} selected={sel} onSelect={setSel} onChange={setRooms} />
