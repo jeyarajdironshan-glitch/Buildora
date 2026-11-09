@@ -85,9 +85,9 @@ function Workspace() {
         </TabsList>
         <TabsContent value="land" className="mt-6"><LandStep p={p} update={update} next={() => setTab("req")} /></TabsContent>
         <TabsContent value="req" className="mt-6"><ReqStep p={p} update={update} next={() => { update({ plans: generatePlans(p.land, p.requirements), selected_plan: null }); setTab("plans"); }} /></TabsContent>
-        <TabsContent value="plans" className="mt-6"><PlansStep p={p} update={update} next={() => setTab("edit")} /></TabsContent>
+        <TabsContent value="plans" className="mt-6"><PlansStep p={p} update={update} next={() => setTab("3d")} /></TabsContent>
         <TabsContent value="edit" className="mt-6">{plan && <EditStep p={p} plan={plan} update={update} />}</TabsContent>
-        <TabsContent value="3d" className="mt-6">{plan && <ThreeStep p={p} plan={plan} update={update} />}</TabsContent>
+        <TabsContent value="3d" className="mt-6">{plan && <ThreeStep p={p} plan={plan} update={update} onEdit2D={() => setTab("edit")} />}</TabsContent>
         <TabsContent value="cost" className="mt-6">{est && <CostStep est={est} p={p} />}</TabsContent>
         <TabsContent value="publish" className="mt-6"><PublishStep p={p} save={save} setStatus={(s) => setP({ ...p, status: s })} /></TabsContent>
       </Tabs>
@@ -346,13 +346,19 @@ function EditStep({ p, plan, update }: StepProps & { plan: Plan }) {
   );
 }
 
-function ThreeStep({ p, plan, update }: StepProps & { plan: Plan }) {
+function ThreeStep({ p, plan, update, onEdit2D }: StepProps & { plan: Plan; onEdit2D: () => void }) {
   const f = p.finishes;
   const set = (patch: Partial<Finishes>) => update({ finishes: { ...f, ...patch } });
   return (
+    <div className="grid gap-4">
+    <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-3 text-sm">
+      <span className="text-muted-foreground">Want to move or resize rooms? Edit the 2D plan — the 3D house updates automatically.</span>
+      <Button size="sm" variant="outline" onClick={onEdit2D}>Edit 2D plan</Button>
+    </div>
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_250px]">
       <House3D plan={plan} land={p.land} finishes={f} />
       <HouseFinishes finishes={f} onChange={set} floors={plan.floors} onFloors={count => update({ requirements: { ...p.requirements, floors: count }, plans: p.plans.map(pl => resizePlanFloors(pl, count)) })} />
+    </div>
     </div>
   );
 }
