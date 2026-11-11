@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicPage } from "@/components/site/SiteHeader";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -16,12 +17,13 @@ export const Route = createFileRoute("/terms")({
 });
 
 function TermsPage() {
+  const { t } = useT();
   return (
-    <PublicPage title="Terms & Conditions" kicker="Legal">
+    <PublicPage title={t("footer_terms")} kicker={t("legal")}>
       <div className="space-y-5 text-lg leading-relaxed text-muted-foreground">
-        <p>Buildora floor plans and estimates are concept tools, not approved architectural or structural drawings.</p>
-        <p>Final designs must be certified by qualified professionals and approved by the relevant local authority.</p>
-        <p>Quotations are offers between you and the construction company; Buildora is not a party to construction contracts.</p>
+        <p>{t("terms_p1")}</p>
+        <p>{t("terms_p2")}</p>
+        <p>{t("terms_p3")}</p>
       </div>
     </PublicPage>
   );

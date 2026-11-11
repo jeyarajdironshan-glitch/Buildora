@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicPage } from "@/components/site/SiteHeader";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -16,11 +17,12 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const { t } = useT();
   return (
-    <PublicPage title="About Buildora" kicker="Who we are">
+    <PublicPage title={t("about_title")} kicker={t("about_kicker")}>
       <div className="space-y-5 text-lg leading-relaxed text-muted-foreground">
-        <p>Buildora helps Sri Lankan families plan homes with confidence. We combine AI-assisted floor planning, 3D visualisation and transparent, quantity-based cost estimates.</p>
-        <p>Our marketplace connects homeowners with verified construction companies, so every quotation starts from the same clear design and bill of quantities.</p>
+        <p>{t("about_p1")}</p>
+        <p>{t("about_p2")}</p>
       </div>
     </PublicPage>
   );

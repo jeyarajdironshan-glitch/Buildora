@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { PublicPage } from "@/components/site/SiteHeader";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/companies")({
   head: () => ({
@@ -16,13 +18,15 @@ export const Route = createFileRoute("/companies")({
 });
 
 function CompaniesPage() {
+  const { t } = useT();
   return (
-    <PublicPage title="For Construction Companies" kicker="Partners">
+    <PublicPage title={t("companies_title")} kicker={t("companies_kicker")}>
       <div className="space-y-5 text-lg leading-relaxed text-muted-foreground">
-        <p>Register your company, submit your business registration number, and get verified by the Buildora team.</p>
-        <p>Once verified, browse published projects in your service districts, review 2D/3D designs and estimates, and submit official quotations.</p>
-        <p>Unverified companies can browse but cannot submit quotations.</p>
+        <p>{t("cp1")}</p>
+        <p>{t("cp2")}</p>
+        <p>{t("cp3")}</p>
       </div>
+      <Button asChild size="lg" className="mt-8"><Link to="/auth" search={{ mode: "signup", kind: "company" }}>{t("cp_cta")}</Link></Button>
     </PublicPage>
   );
 }

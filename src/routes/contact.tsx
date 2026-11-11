@@ -3,6 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { PublicPage } from "@/components/site/SiteHeader";
+import { useT, type MsgKey } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,32 +25,33 @@ export const Route = createFileRoute("/contact")({
 });
 
 const schema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100),
-  email: z.string().trim().email("Enter a valid email").max(255),
-  message: z.string().trim().min(1, "Message is required").max(2000),
+  name: z.string().trim().min(1, "v_name").max(100),
+  email: z.string().trim().email("v_email").max(255),
+  message: z.string().trim().min(1, "v_message").max(2000),
 });
 
 function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [busy, setBusy] = useState(false);
+  const { t } = useT();
   const submit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     const p = schema.safeParse(form);
-    if (!p.success) return toast.error(p.error.issues[0].message);
+    if (!p.success) return toast.error(t(p.error.issues[0].message as MsgKey));
     setBusy(true);
     const { error } = await supabase.from("contact_messages").insert(p.data);
     setBusy(false);
-    if (error) return toast.error("Could not send your message. Please try again.");
-    toast.success("Message sent. We'll reply soon.");
+    if (error) return toast.error(t("contact_failed"));
+    toast.success(t("contact_sent"));
     setForm({ name: "", email: "", message: "" });
   };
   return (
-    <PublicPage title="Contact Us" kicker="Say hello">
+    <PublicPage title={t("contact_title")} kicker={t("contact_kicker")}>
       <form onSubmit={submit} className="grid max-w-xl gap-4">
-        <div className="grid gap-2"><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-        <div className="grid gap-2"><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-        <div className="grid gap-2"><Label>Message</Label><Textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
-        <Button disabled={busy} className="w-fit">{busy ? "Sending…" : "Send message"}</Button>
+        <div className="grid gap-2"><Label>{t("name")}</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+        <div className="grid gap-2"><Label>{t("email")}</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+        <div className="grid gap-2"><Label>{t("message")}</Label><Textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
+        <Button disabled={busy} className="w-fit">{busy ? t("sending") : t("send_message")}</Button>
       </form>
     </PublicPage>
   );

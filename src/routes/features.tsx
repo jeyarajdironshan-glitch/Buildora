@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicPage } from "@/components/site/SiteHeader";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/features")({
   head: () => ({
@@ -16,15 +17,16 @@ export const Route = createFileRoute("/features")({
 });
 
 function FeaturesPage() {
+  const { t } = useT();
   return (
-    <PublicPage title="Platform Features" kicker="Features">
+    <PublicPage title={t("features_page_title")} kicker={t("features_kicker")}>
       <div className="space-y-5 text-lg leading-relaxed text-muted-foreground">
-        <p>AI requirement understanding – plain-language briefs become structured room lists.</p>
-        <p>Four layout strategies: Linear Flow, Side Zoning, Garden Court and Service Front.</p>
-        <p>2D editor with drag, resize, snapping, live dimensions and overlap warnings.</p>
-        <p>3D house view with customisable wall, roof and floor finishes.</p>
-        <p>Quantity-based cost estimation with Sri Lankan reference rates and regional factors.</p>
-        <p>Marketplace with verified companies, quotations and comparisons.</p>
+        <p>{t("fp1")}</p>
+        <p>{t("fp2")}</p>
+        <p>{t("fp3")}</p>
+        <p>{t("fp4")}</p>
+        <p>{t("fp5")}</p>
+        <p>{t("fp6")}</p>
       </div>
     </PublicPage>
   );
