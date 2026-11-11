@@ -36,3 +36,4 @@ use the editor.
 - Roles live in `user_roles` (customer/company/admin); signup trigger only ever assigns customer or company. Admins are granted manually in the database.
 - Project data (land, requirements, plans, finishes, estimate) is JSONB on `projects`; quotations insert is gated by RLS to verified companies on published projects.
 - House visualization geometry and storey changes live in `src/lib/buildora/viewer.ts`; scene rendering and finish controls remain separate so edited rooms and saved customer choices are preserved.
+- Interface text goes through `useT()` from `src/lib/i18n.tsx`; English/Sinhala/Tamil strings live in `src/lib/i18n-messages.ts`, typed so every language defines every key — keeps the three languages complete.
