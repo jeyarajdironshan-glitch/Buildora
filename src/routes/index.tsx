@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SiteHeader, SiteFooter } from "@/components/site/SiteHeader";
 import hero from "@/assets/hero-house.jpg";
+import { useT, type MsgKey } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,31 +20,16 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const STEPS = [
-  { n: "01", t: "Describe your land", d: "Enter plot size in feet, metres or perches, road side and site conditions." },
-  { n: "02", t: "Tell us your needs", d: "Bedrooms, floors, style and budget – or simply describe your dream home." },
-  { n: "03", t: "Pick from 4 AI plans", d: "Four distinct layouts that respect setbacks and room sizes." },
-  { n: "04", t: "Edit, view in 3D, price it", d: "Refine the 2D plan, walk around in 3D and get a quantity-based estimate." },
-  { n: "05", t: "Get quotations", d: "Publish to verified Sri Lankan construction companies and compare offers." },
-];
+const STEPS = [1, 2, 3, 4, 5].map((n) => ({ n: `0${n}`, t: `step${n}_t`, d: `step${n}_d` }) as { n: string; t: MsgKey; d: MsgKey });
 
-const FEATURES = [
-  { i: Sparkles, t: "AI requirement understanding", d: "Write what you want in plain words; Buildora turns it into a structured brief." },
-  { i: PenTool, t: "Editable 2D drawings", d: "Move and resize rooms with live dimensions and overlap checks." },
-  { i: Box, t: "Synchronised 3D", d: "Every 2D change rebuilds the 3D house instantly." },
-  { i: Calculator, t: "Quantity-based costing", d: "Concrete, steel, masonry, finishes and labour at Sri Lankan rates with regional factors." },
-  { i: Building2, t: "Construction marketplace", d: "Verified companies review your design and submit official quotations." },
-  { i: ShieldCheck, t: "Verified builders only", d: "Companies must pass business registration checks before quoting." },
-];
+const FEATURES = [Sparkles, PenTool, Box, Calculator, Building2, ShieldCheck].map((i, k) => ({ i, t: `feat${k + 1}_t`, d: `feat${k + 1}_d` }) as { i: typeof Sparkles; t: MsgKey; d: MsgKey });
 
-const FAQ = [
-  ["Are the AI floor plans approved drawings?", "No. They are concept layouts to help you plan. Final drawings must be prepared and approved by a qualified architect and your local authority."],
-  ["How accurate is the cost estimate?", "Estimates are calculated from real quantities of your design using reference Sri Lankan rates. Actual quotations vary with market prices, site conditions and specifications."],
-  ["Which units can I use?", "Feet, metres, square feet and perches. Everything is stored internally in metres."],
-  ["Who can quote on my project?", "Only construction companies verified by the Buildora team can submit official quotations."],
-];
+const FAQ = [1, 2, 3, 4].map((n) => [`faq${n}_q`, `faq${n}_a`] as [MsgKey, MsgKey]);
+
+const QUOTES: [string, string, MsgKey][] = [["Nimal P.", "Kandy", "quote1"], ["Ayesha R.", "Colombo", "quote2"], ["Kasun W.", "Galle", "quote3"]];
 
 function Index() {
+  const { t } = useT();
   return (
     <div className="min-h-screen">
       <section className="relative min-h-[92vh] overflow-hidden">
@@ -51,25 +37,25 @@ function Index() {
         <div className="absolute inset-0 bg-hero-overlay" />
         <SiteHeader overlay />
         <div className="relative mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-end px-5 pb-20 pt-32">
-          <p className="animate-rise font-mono text-xs uppercase tracking-[0.3em] text-gold">Imagine. Design. Build.</p>
-          <h1 className="animate-rise mt-4 max-w-3xl text-4xl font-extrabold leading-[1.05] text-navy-foreground md:text-6xl">Your Dream Home Starts With a Smarter Plan.</h1>
-          <p className="animate-rise mt-5 max-w-2xl text-lg text-navy-foreground/80">Design your home with AI, explore it in 3D, understand construction costs, and connect with trusted construction companies across Sri Lanka.</p>
+          <p className="animate-rise font-mono text-xs uppercase tracking-[0.3em] text-gold">{t("tagline")}</p>
+          <h1 className="animate-rise mt-4 max-w-3xl text-4xl font-extrabold leading-[1.05] text-navy-foreground md:text-6xl">{t("hero_title")}</h1>
+          <p className="animate-rise mt-5 max-w-2xl text-lg text-navy-foreground/80">{t("hero_body")}</p>
           <div className="animate-rise mt-8 flex flex-wrap gap-3">
-            <Button asChild variant="gold" size="lg"><Link to="/auth" search={{ mode: "signup" }}>Start Designing <ArrowRight /></Link></Button>
-            <Button asChild variant="glass" size="lg"><Link to="/how-it-works">Explore How It Works</Link></Button>
+            <Button asChild variant="gold" size="lg"><Link to="/auth" search={{ mode: "signup" }}>{t("start_designing")} <ArrowRight /></Link></Button>
+            <Button asChild variant="glass" size="lg"><Link to="/how-it-works">{t("explore_how")}</Link></Button>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-24">
-        <p className="font-mono text-xs uppercase tracking-widest text-primary">How Buildora works</p>
-        <h2 className="mt-2 max-w-2xl text-3xl font-extrabold md:text-4xl">From a plot of land to builder quotations in five steps.</h2>
+        <p className="font-mono text-xs uppercase tracking-widest text-primary">{t("how_kicker")}</p>
+        <h2 className="mt-2 max-w-2xl text-3xl font-extrabold md:text-4xl">{t("how_title")}</h2>
         <div className="mt-12 grid gap-4 md:grid-cols-5">
           {STEPS.map((s) => (
             <div key={s.n} className="rounded-xl border bg-card p-5 shadow-soft transition hover:-translate-y-1 hover:shadow-lift">
               <span className="font-mono text-sm text-gold">{s.n}</span>
-              <h3 className="mt-3 font-bold">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
+              <h3 className="mt-3 font-bold">{t(s.t)}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{t(s.d)}</p>
             </div>
           ))}
         </div>
@@ -77,14 +63,14 @@ function Index() {
 
       <section className="bg-navy py-24 text-navy-foreground">
         <div className="mx-auto max-w-7xl px-5">
-          <p className="font-mono text-xs uppercase tracking-widest text-gold">Features</p>
-          <h2 className="mt-2 max-w-2xl text-3xl font-extrabold md:text-4xl">Everything you need before you break ground.</h2>
+          <p className="font-mono text-xs uppercase tracking-widest text-gold">{t("features_kicker")}</p>
+          <h2 className="mt-2 max-w-2xl text-3xl font-extrabold md:text-4xl">{t("features_title")}</h2>
           <div className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-navy-foreground/10 md:grid-cols-3">
             {FEATURES.map((f) => (
               <div key={f.t} className="bg-navy p-7">
                 <f.i className="size-6 text-gold" />
-                <h3 className="mt-4 text-lg font-bold">{f.t}</h3>
-                <p className="mt-2 text-sm text-navy-foreground/70">{f.d}</p>
+                <h3 className="mt-4 text-lg font-bold">{t(f.t)}</h3>
+                <p className="mt-2 text-sm text-navy-foreground/70">{t(f.d)}</p>
               </div>
             ))}
           </div>
@@ -94,11 +80,11 @@ function Index() {
       <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-24 md:grid-cols-2">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-primary">2D ⇄ 3D</p>
-          <h2 className="mt-2 text-3xl font-extrabold md:text-4xl">Draw once. See it everywhere.</h2>
-          <p className="mt-4 text-muted-foreground">Rooms you resize in the plan editor become walls, floors and roofs in 3D – and flow straight into your cost estimate.</p>
+          <h2 className="mt-2 text-3xl font-extrabold md:text-4xl">{t("sync_title")}</h2>
+          <p className="mt-4 text-muted-foreground">{t("sync_body")}</p>
           <div className="mt-6 grid grid-cols-3 gap-3 font-mono text-sm">
-            {[["4", "AI layouts"], ["LKR", "local rates"], ["25", "districts"]].map(([a, b]) => (
-              <div key={b} className="rounded-lg border bg-card p-4"><div className="text-2xl font-medium text-primary">{a}</div><div className="text-xs text-muted-foreground">{b}</div></div>
+            {([["4", "stat_layouts"], ["LKR", "stat_rates"], ["25", "stat_districts"]] as [string, MsgKey][]).map(([a, b]) => (
+              <div key={b} className="rounded-lg border bg-card p-4"><div className="text-2xl font-medium text-primary">{a}</div><div className="text-xs text-muted-foreground">{t(b)}</div></div>
             ))}
           </div>
         </div>
@@ -118,15 +104,15 @@ function Index() {
         <div className="mx-auto max-w-7xl px-5">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-primary">Testimonials</p>
-              <h2 className="mt-2 text-3xl font-extrabold">What homeowners say</h2>
+              <p className="font-mono text-xs uppercase tracking-widest text-primary">{t("testimonials")}</p>
+              <h2 className="mt-2 text-3xl font-extrabold">{t("testimonials_title")}</h2>
             </div>
-            <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">Sample content for illustration</span>
+            <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">{t("sample_note")}</span>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {[["Nimal P.", "Kandy", "Seeing four layouts side by side made the decision easy for our family."],["Ayesha R.", "Colombo", "The cost breakdown helped us talk to builders with real numbers."],["Kasun W.", "Galle", "Three quotations within a week, all from verified companies."]].map(([n, d, q]) => (
+            {QUOTES.map(([n, d, q]) => (
               <figure key={n} className="rounded-xl bg-card p-6 shadow-soft">
-                <blockquote className="text-sm">“{q}”</blockquote>
+                <blockquote className="text-sm">“{t(q)}”</blockquote>
                 <figcaption className="mt-4 flex items-center gap-2 text-sm font-semibold">{n}<span className="flex items-center gap-1 font-normal text-muted-foreground"><MapPin className="size-3" />{d}</span></figcaption>
               </figure>
             ))}
@@ -135,15 +121,15 @@ function Index() {
       </section>
 
       <section className="mx-auto max-w-3xl px-5 py-24">
-        <h2 className="text-3xl font-extrabold">Frequently asked questions</h2>
+        <h2 className="text-3xl font-extrabold">{t("faq_title")}</h2>
         <Accordion type="single" collapsible className="mt-8">
           {FAQ.map(([q, a]) => (
-            <AccordionItem key={q} value={q}><AccordionTrigger className="text-left">{q}</AccordionTrigger><AccordionContent className="text-muted-foreground">{a}</AccordionContent></AccordionItem>
+            <AccordionItem key={q} value={q}><AccordionTrigger className="text-left">{t(q)}</AccordionTrigger><AccordionContent className="text-muted-foreground">{t(a)}</AccordionContent></AccordionItem>
           ))}
         </Accordion>
         <div className="mt-14 rounded-2xl bg-emerald-gradient p-10 text-center text-primary-foreground">
-          <h3 className="text-2xl font-extrabold">Ready to plan your home?</h3>
-          <Button asChild variant="gold" size="lg" className="mt-6"><Link to="/auth" search={{ mode: "signup" }}>Start Designing</Link></Button>
+          <h3 className="text-2xl font-extrabold">{t("cta_title")}</h3>
+          <Button asChild variant="gold" size="lg" className="mt-6"><Link to="/auth" search={{ mode: "signup" }}>{t("start_designing")}</Link></Button>
         </div>
       </section>
       <SiteFooter />
