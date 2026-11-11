@@ -41,8 +41,8 @@ function Index() {
           <h1 className="animate-rise mt-4 max-w-3xl text-4xl font-extrabold leading-[1.05] text-navy-foreground md:text-6xl">{t("hero_title")}</h1>
           <p className="animate-rise mt-5 max-w-2xl text-lg text-navy-foreground/80">{t("hero_body")}</p>
           <div className="animate-rise mt-8 flex flex-wrap gap-3">
-            <Button asChild variant="gold" size="lg"><Link to="/auth" search={{ mode: "signup" }}>{t("start_designing")} <ArrowRight /></Link></Button>
-            <Button asChild variant="glass" size="lg"><Link to="/how-it-works">{t("explore_how")}</Link></Button>
+            <Button asChild variant="gold" size="lg" className="h-auto min-h-11 max-w-full whitespace-normal py-2 text-center"><Link to="/auth" search={{ mode: "signup" }}>{t("start_designing")} <ArrowRight /></Link></Button>
+            <Button asChild variant="glass" size="lg" className="h-auto min-h-11 max-w-full whitespace-normal py-2 text-center"><Link to="/how-it-works">{t("explore_how")}</Link></Button>
           </div>
         </div>
       </section>
