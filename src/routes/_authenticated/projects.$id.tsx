@@ -25,6 +25,7 @@ import { generatePlans, landWarnings, planWarnings, ROOM_CATALOG } from "@/lib/b
 import { estimate } from "@/lib/buildora/cost";
 import { fmt, ftToM, lkr, mToFt, sqmToPerch, sqmToSqft } from "@/lib/buildora/units";
 import { parseBrief } from "@/lib/ai.functions";
+import { useT, type MsgKey } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/projects/$id")({
   head: () => ({ meta: [{ title: "House design studio – Buildora" }, { name: "description", content: "Design floor plans, explore furnished interiors and choose your home finishes with Buildora." }, { property: "og:title", content: "House design studio – Buildora" }, { property: "og:description", content: "Explore your house plans, furnished 3D interiors and finishes." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
@@ -39,6 +40,7 @@ interface Project {
 function Workspace() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { t } = useT();
   const { data, isLoading, error } = useQuery({
     queryKey: ["project", id],
     queryFn: async () => {
@@ -79,7 +81,7 @@ function Workspace() {
     >
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="h-auto flex-wrap">
-          {(["land", "req", "plans", "edit", "3d", "cost", "publish"] as const).map((v) => [v, t(`tab_${v}`)]).map(([v, l]) => (
+          {(["land", "req", "plans", "edit", "3d", "cost", "publish"] as const).map((v) => [v, t(`tab_${v}` as MsgKey)]).map(([v, l]) => (
             <TabsTrigger key={v} value={v} disabled={["edit", "3d", "cost", "publish"].includes(v) && !plan}>{l}</TabsTrigger>
           ))}
         </TabsList>
