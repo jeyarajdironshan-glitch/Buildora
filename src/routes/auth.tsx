@@ -111,6 +111,7 @@ function AuthPage() {
     });
     if (error) {
       if (error.code === "user_already_exists") throw new KeyedError("err_email_exists");
+      if (error.code === "weak_password") throw new KeyedError("err_weak_password");
       throw error;
     }
     // An already-registered email returns a user with no identities and no email is sent.
