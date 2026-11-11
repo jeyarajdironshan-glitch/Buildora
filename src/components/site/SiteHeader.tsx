@@ -5,14 +5,16 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/lib/session";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const NAV = [
-  { to: "/how-it-works", label: "How It Works" },
-  { to: "/features", label: "Features" },
-  { to: "/companies", label: "Companies" },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
+  { to: "/how-it-works", key: "nav_how" },
+  { to: "/features", key: "nav_features" },
+  { to: "/companies", key: "nav_companies" },
+  { to: "/about", key: "nav_about" },
+  { to: "/contact", key: "nav_contact" },
 ] as const;
 
 export function Logo({ light }: { light?: boolean }) {
@@ -26,6 +28,7 @@ export function Logo({ light }: { light?: boolean }) {
 
 export function SiteHeader({ overlay }: { overlay?: boolean }) {
   const { user } = useUser();
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -37,43 +40,47 @@ export function SiteHeader({ overlay }: { overlay?: boolean }) {
   };
   return (
     <header className={cn("z-40 w-full", overlay ? "absolute inset-x-0 top-0" : "sticky top-0 border-b bg-background/85 backdrop-blur")}>
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5">
         <Logo light={overlay} />
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-6 lg:flex">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to} className={cn("text-sm font-medium transition-colors", overlay ? "text-navy-foreground/80 hover:text-navy-foreground" : "text-muted-foreground hover:text-foreground")} activeProps={{ className: overlay ? "text-navy-foreground" : "text-foreground" }}>
-              {n.label}
+              {t(n.key)}
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
+          <LanguageSwitcher overlay={overlay} />
           {user ? (
             <>
-              <Button asChild variant={overlay ? "glass" : "outline"} size="sm"><Link to="/dashboard">Dashboard</Link></Button>
-              <Button variant={overlay ? "glass" : "ghost"} size="sm" onClick={signOut}>Sign out</Button>
+              <Button asChild variant={overlay ? "glass" : "outline"} size="sm"><Link to="/dashboard">{t("dashboard")}</Link></Button>
+              <Button variant={overlay ? "glass" : "ghost"} size="sm" onClick={signOut}>{t("sign_out")}</Button>
             </>
           ) : (
             <>
-              <Button asChild variant={overlay ? "glass" : "ghost"} size="sm"><Link to="/auth">Sign in</Link></Button>
-              <Button asChild variant={overlay ? "gold" : "default"} size="sm"><Link to="/auth" search={{ mode: "signup" }}>Start Designing</Link></Button>
+              <Button asChild variant={overlay ? "glass" : "ghost"} size="sm"><Link to="/auth">{t("sign_in")}</Link></Button>
+              <Button asChild variant={overlay ? "gold" : "default"} size="sm"><Link to="/auth" search={{ mode: "signup" }}>{t("start_designing")}</Link></Button>
             </>
           )}
         </div>
-        <button className={cn("md:hidden", overlay && "text-navy-foreground")} onClick={() => setOpen(!open)} aria-label="Menu">
-          {open ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <LanguageSwitcher overlay={overlay} />
+          <button className={cn(overlay && "text-navy-foreground")} onClick={() => setOpen(!open)} aria-label="Menu">
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
       {open && (
-        <div className="border-t bg-background px-5 py-4 md:hidden">
+        <div className="border-t bg-background px-5 py-4 lg:hidden">
           <div className="flex flex-col gap-3">
-            {NAV.map((n) => <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="text-sm font-medium">{n.label}</Link>)}
+            {NAV.map((n) => <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="text-sm font-medium">{t(n.key)}</Link>)}
             {user ? (
               <>
-                <Link to="/dashboard" className="text-sm font-semibold text-primary">Dashboard</Link>
-                <button onClick={signOut} className="text-left text-sm">Sign out</button>
+                <Link to="/dashboard" className="text-sm font-semibold text-primary">{t("dashboard")}</Link>
+                <button onClick={signOut} className="text-left text-sm">{t("sign_out")}</button>
               </>
             ) : (
-              <Link to="/auth" className="text-sm font-semibold text-primary">Sign in / Register</Link>
+              <Link to="/auth" className="text-sm font-semibold text-primary">{t("sign_in_register")}</Link>
             )}
           </div>
         </div>
@@ -83,28 +90,29 @@ export function SiteHeader({ overlay }: { overlay?: boolean }) {
 }
 
 export function SiteFooter() {
+  const { t } = useT();
   return (
     <footer className="bg-navy text-navy-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4">
         <div className="md:col-span-2">
           <Logo light />
-          <p className="mt-3 max-w-sm text-sm text-navy-foreground/70">Imagine. Design. Build. AI-assisted house design and construction marketplace for Sri Lanka.</p>
+          <p className="mt-3 max-w-sm text-sm text-navy-foreground/70">{t("footer_tagline")}</p>
         </div>
         <div className="flex flex-col gap-2 text-sm text-navy-foreground/70">
-          <span className="font-display font-bold text-navy-foreground">Platform</span>
-          <Link to="/how-it-works">How It Works</Link>
-          <Link to="/features">Features</Link>
-          <Link to="/companies">Construction Companies</Link>
+          <span className="font-display font-bold text-navy-foreground">{t("footer_platform")}</span>
+          <Link to="/how-it-works">{t("nav_how")}</Link>
+          <Link to="/features">{t("nav_features")}</Link>
+          <Link to="/companies">{t("footer_companies")}</Link>
         </div>
         <div className="flex flex-col gap-2 text-sm text-navy-foreground/70">
-          <span className="font-display font-bold text-navy-foreground">Company</span>
-          <Link to="/about">About Us</Link>
-          <Link to="/contact">Contact</Link>
-          <Link to="/privacy">Privacy Policy</Link>
-          <Link to="/terms">Terms & Conditions</Link>
+          <span className="font-display font-bold text-navy-foreground">{t("footer_company")}</span>
+          <Link to="/about">{t("footer_about")}</Link>
+          <Link to="/contact">{t("nav_contact")}</Link>
+          <Link to="/privacy">{t("footer_privacy")}</Link>
+          <Link to="/terms">{t("footer_terms")}</Link>
         </div>
       </div>
-      <div className="border-t border-navy-foreground/10 py-5 text-center text-xs text-navy-foreground/50">© {new Date().getFullYear()} Buildora. All rights reserved.</div>
+      <div className="border-t border-navy-foreground/10 py-5 text-center text-xs text-navy-foreground/50">© {new Date().getFullYear()} Buildora. {t("footer_rights")}</div>
     </footer>
   );
 }

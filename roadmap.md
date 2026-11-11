@@ -5,6 +5,7 @@
 - [x] Verify saved choices and desktop/mobile rendering.
 
 # Accounts, languages, GitHub
-- [ ] Fix company account creation (clear message when email is already registered).
-- [ ] English / Sinhala / Tamil language switch across the site.
+- [x] Fix company account creation (clear message when email is already registered).
+- [x] English / Sinhala / Tamil language switch on public pages, sign-in, dashboards and project tabs.
+- [ ] Translate inner design tools (land form, requirements, plan editor, 3D finishes, cost, quotations).
 - [ ] GitHub sync — waits on the user connecting GitHub in Project settings → Git.

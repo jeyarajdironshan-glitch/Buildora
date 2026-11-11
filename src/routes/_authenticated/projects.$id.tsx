@@ -25,6 +25,7 @@ import { generatePlans, landWarnings, planWarnings, ROOM_CATALOG } from "@/lib/b
 import { estimate } from "@/lib/buildora/cost";
 import { fmt, ftToM, lkr, mToFt, sqmToPerch, sqmToSqft } from "@/lib/buildora/units";
 import { parseBrief } from "@/lib/ai.functions";
+import { useT, type MsgKey } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/projects/$id")({
   head: () => ({ meta: [{ title: "House design studio – Buildora" }, { name: "description", content: "Design floor plans, explore furnished interiors and choose your home finishes with Buildora." }, { property: "og:title", content: "House design studio – Buildora" }, { property: "og:description", content: "Explore your house plans, furnished 3D interiors and finishes." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
@@ -39,6 +40,7 @@ interface Project {
 function Workspace() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { t } = useT();
   const { data, isLoading, error } = useQuery({
     queryKey: ["project", id],
     queryFn: async () => {
@@ -68,18 +70,18 @@ function Workspace() {
     return true;
   };
 
-  if (error) return <AppShell title="Project not found"><Link to="/dashboard" className="text-primary">Back to dashboard</Link></AppShell>;
-  if (isLoading || !p) return <AppShell title="Loading project…"><Skeleton className="h-96" /></AppShell>;
+  if (error) return <AppShell title={t("project_not_found")}><Link to="/dashboard" className="text-primary">{t("back_dashboard")}</Link></AppShell>;
+  if (isLoading || !p) return <AppShell title={t("loading_project")}><Skeleton className="h-96" /></AppShell>;
 
   return (
     <AppShell
       title={p.name}
-      subtitle={<span className="flex items-center gap-2"><Link to="/dashboard" className="inline-flex items-center gap-1 hover:text-foreground"><ArrowLeft className="size-3" /> Projects</Link><Badge variant="secondary">{p.status}</Badge></span>}
-      actions={<Button onClick={async () => (await save()) && toast.success("Saved")} variant={dirty ? "default" : "outline"}><Save /> {dirty ? "Save changes" : "Saved"}</Button>}
+      subtitle={<span className="flex items-center gap-2"><Link to="/dashboard" className="inline-flex items-center gap-1 hover:text-foreground"><ArrowLeft className="size-3" /> {t("projects")}</Link><Badge variant="secondary">{p.status === "draft" || p.status === "published" ? t(`status_${p.status}` as MsgKey) : p.status}</Badge></span>}
+      actions={<Button onClick={async () => (await save()) && toast.success(t("saved"))} variant={dirty ? "default" : "outline"}><Save /> {dirty ? t("save_changes") : t("saved")}</Button>}
     >
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="h-auto flex-wrap">
-          {[["land", "1 · Land"], ["req", "2 · Requirements"], ["plans", "3 · AI Plans"], ["edit", "4 · 2D Editor"], ["3d", "5 · 3D"], ["cost", "6 · Cost"], ["publish", "7 · Quotations"]].map(([v, l]) => (
+          {(["land", "req", "plans", "edit", "3d", "cost", "publish"] as const).map((v) => [v, t(`tab_${v}` as MsgKey)]).map(([v, l]) => (
             <TabsTrigger key={v} value={v} disabled={["edit", "3d", "cost", "publish"].includes(v) && !plan}>{l}</TabsTrigger>
           ))}
         </TabsList>
