@@ -1,5 +1,6 @@
 // Interface text for the three supported languages. English is the reference;
 // Sinhala and Tamil must define every English key (enforced by the type and a test).
+import { studioEn, studioSi, studioTa } from "./i18n-messages-studio";
 
 export const en = {
   // header / footer
@@ -217,6 +218,7 @@ export const en = {
   project_not_found: "Project not found",
   back_dashboard: "Back to dashboard",
   loading_project: "Loading project…",
+  ...studioEn,
 } as const;
 
 export type MsgKey = keyof typeof en;
@@ -432,6 +434,7 @@ export const si: Messages = {
   project_not_found: "ව්‍යාපෘතිය හමු නොවීය",
   back_dashboard: "උපකරණ පුවරුවට ආපසු",
   loading_project: "ව්‍යාපෘතිය පූරණය වෙමින්…",
+  ...studioSi,
 };
 
 export const ta: Messages = {
@@ -644,4 +647,5 @@ export const ta: Messages = {
   project_not_found: "திட்டம் கிடைக்கவில்லை",
   back_dashboard: "டாஷ்போர்டுக்குத் திரும்பு",
   loading_project: "திட்டத்தை ஏற்றுகிறது…",
+  ...studioTa,
 };
