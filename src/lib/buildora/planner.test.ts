@@ -9,7 +9,7 @@ describe("planner", () => {
   });
   it("plans have no overlaps and respect setbacks", () => {
     for (const p of generatePlans(DEFAULT_LAND, DEFAULT_REQ)) {
-      expect(planWarnings(p, DEFAULT_LAND).filter((w) => w.includes("overlaps") || w.includes("setback"))).toEqual([]);
+      expect(planWarnings(p, DEFAULT_LAND).filter((w) => w.code === "overlap" || w.code === "setback")).toEqual([]);
     }
   });
   it("applies a 3 m road setback", () => {

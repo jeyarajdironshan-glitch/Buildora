@@ -7,5 +7,6 @@
 # Accounts, languages, GitHub
 - [x] Fix company account creation (clear message when email is already registered).
 - [x] English / Sinhala / Tamil language switch on public pages, sign-in, dashboards and project tabs.
-- [ ] Translate inner design tools (land form, requirements, plan editor, 3D finishes, cost, quotations).
-- [ ] GitHub sync — waits on the user connecting GitHub in Project settings → Git.
+- [ ] Translate every remaining screen (land form, requirements, plans, 2D editor, 3D controls, finishes, cost, quotations, company market, admin), including room names, plan names, warnings and cost items.
+- [ ] Voice input: customer speaks requirements (English/Sinhala/Tamil), speech becomes text and AI fills the requirement form.
+- [ ] GitHub repository rename — done by the user on GitHub (Settings → Repository name); sync keeps working.
