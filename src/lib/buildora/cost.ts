@@ -32,7 +32,7 @@ const WALL_H = 3;
 const EXT_T = 0.225;
 const INT_T = 0.115;
 
-export interface CostLine { item: string; qty: number; unit: string; rate: number; amount: number }
+export interface CostLine { key?: CostKey; item: string; qty: number; unit: string; rate: number; amount: number }
 export interface Estimate { lines: CostLine[]; subtotal: number; labour: number; contingency: number; total: number; area: number; perSqft: number; regional: number }
 
 export function estimate(plan: Plan, finishes: Finishes, district: string): Estimate {
