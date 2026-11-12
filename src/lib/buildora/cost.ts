@@ -1,5 +1,7 @@
 import type { Finishes, Plan } from "./types";
 
+export type CostKey = "concrete" | "steel" | "masonry" | "plaster" | "paint" | "floor" | "roof_pitched" | "roof_flat" | "doors" | "windows" | "bath" | "kitchen" | "electrical" | "plumbing";
+
 /**
  * Sample Sri Lankan unit rates (LKR). These are editable reference figures,
  * not live market prices.
@@ -54,24 +56,24 @@ export function estimate(plan: Plan, finishes: Finishes, district: string): Esti
   const wallFaces = (extPerimeter * 2 + intWall * 2) * WALL_H * 0.85;
   const roofArea = fp.w * fp.h * (finishes.roofType === "pitched" ? 1.25 : 1.05);
 
-  const raw: [string, number, string, number][] = [
-    ["Concrete (foundation, slabs, columns)", concrete, "m³", RATES.concrete_m3],
-    ["Reinforcement steel", concrete * 95, "kg", RATES.steel_kg],
-    ["Masonry walls", brick, "m³", RATES.brick_m3],
-    ["Plastering", wallFaces, "m²", RATES.plaster_m2],
-    ["Painting", wallFaces, "m²", RATES.paint_m2 * lvl],
-    ["Floor finishes", floorArea, "m²", RATES.floor_tile_m2 * lvl],
-    [finishes.roofType === "pitched" ? "Pitched roof (timber + tiles)" : "Flat roof waterproofing", roofArea, "m²", RATES.roof_m2 * lvl],
-    ["Doors", doors, "nos", RATES.door * lvl],
-    ["Windows", windows, "nos", RATES.window * lvl],
-    ["Bathroom fit-out", baths, "nos", RATES.bath_fitout * lvl],
-    ["Kitchen fit-out", kitchens, "nos", RATES.kitchen_fitout * lvl],
-    ["Electrical installation", floorArea, "m²", RATES.electrical_m2],
-    ["Plumbing installation", floorArea, "m²", RATES.plumbing_m2],
+  const raw: [CostKey, string, number, string, number][] = [
+    ["concrete", "Concrete (foundation, slabs, columns)", concrete, "m³", RATES.concrete_m3],
+    ["steel", "Reinforcement steel", concrete * 95, "kg", RATES.steel_kg],
+    ["masonry", "Masonry walls", brick, "m³", RATES.brick_m3],
+    ["plaster", "Plastering", wallFaces, "m²", RATES.plaster_m2],
+    ["paint", "Painting", wallFaces, "m²", RATES.paint_m2 * lvl],
+    ["floor", "Floor finishes", floorArea, "m²", RATES.floor_tile_m2 * lvl],
+    [finishes.roofType === "pitched" ? "roof_pitched" : "roof_flat", finishes.roofType === "pitched" ? "Pitched roof (timber + tiles)" : "Flat roof waterproofing", roofArea, "m²", RATES.roof_m2 * lvl],
+    ["doors", "Doors", doors, "nos", RATES.door * lvl],
+    ["windows", "Windows", windows, "nos", RATES.window * lvl],
+    ["bath", "Bathroom fit-out", baths, "nos", RATES.bath_fitout * lvl],
+    ["kitchen", "Kitchen fit-out", kitchens, "nos", RATES.kitchen_fitout * lvl],
+    ["electrical", "Electrical installation", floorArea, "m²", RATES.electrical_m2],
+    ["plumbing", "Plumbing installation", floorArea, "m²", RATES.plumbing_m2],
   ];
-  const lines = raw.map(([item, qty, unit, rate]) => {
+  const lines = raw.map(([key, item, qty, unit, rate]) => {
     const r = rate * reg;
-    return { item, qty, unit, rate: r, amount: qty * r };
+    return { key, item, qty, unit, rate: r, amount: qty * r };
   });
   const subtotal = lines.reduce((s, l) => s + l.amount, 0);
   const labour = subtotal * RATES.labour_factor;

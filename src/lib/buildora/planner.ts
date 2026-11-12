@@ -149,27 +149,31 @@ export function overlaps(a: Room, b: Room) {
   return a.floor === b.floor && a.x < b.x + b.w - 0.01 && b.x < a.x + a.w - 0.01 && a.y < b.y + b.h - 0.01 && b.y < a.y + a.h - 0.01;
 }
 
-export function planWarnings(plan: Plan, land: Land): string[] {
-  const w: string[] = [];
+export type PlanWarning = { code: "setback" | "narrow" | "overlap"; room: string; other?: string; floor: number };
+export type LandWarning = "size" | "narrow" | "location" | "soil" | "slope" | "road";
+
+/** Structured so the interface can show each warning in the customer's language. */
+export function planWarnings(plan: Plan, land: Land): PlanWarning[] {
+  const w: PlanWarning[] = [];
   const b = buildableRect(land);
   for (const r of plan.rooms) {
     if (r.x < b.x - 0.05 || r.y < b.y - 0.05 || r.x + r.w > b.x + b.w + 0.05 || r.y + r.h > b.y + b.h + 0.05)
-      w.push(`${r.name} (floor ${r.floor}) crosses the setback line.`);
-    if (r.type !== "staircase" && (r.w < 1.8 || r.h < 1.8)) w.push(`${r.name} is narrower than 1.8 m.`);
+      w.push({ code: "setback", room: r.name, floor: r.floor });
+    if (r.type !== "staircase" && (r.w < 1.8 || r.h < 1.8)) w.push({ code: "narrow", room: r.name, floor: r.floor });
   }
   for (let i = 0; i < plan.rooms.length; i++)
     for (let j = i + 1; j < plan.rooms.length; j++)
-      if (overlaps(plan.rooms[i], plan.rooms[j])) w.push(`${plan.rooms[i].name} overlaps ${plan.rooms[j].name}.`);
+      if (overlaps(plan.rooms[i], plan.rooms[j])) w.push({ code: "overlap", room: plan.rooms[i].name, other: plan.rooms[j].name, floor: plan.rooms[i].floor });
   return w;
 }
 
-export function landWarnings(land: Land): string[] {
-  const w: string[] = [];
-  if (!(land.width > 0) || !(land.length > 0)) w.push("Enter land width and length.");
-  if (land.width < 6) w.push("Land is narrower than 6 m – very limited building width after setbacks.");
-  if (!land.location) w.push("Land location is missing.");
-  if (land.terrain !== "flat" && !land.soil) w.push("Soil information is recommended for sloped land.");
-  if (land.slope > 15) w.push("Slope above 15% may need retaining walls (not included in estimates).");
-  if (land.roadWidth < 3) w.push("Road narrower than 3 m may restrict building approval and truck access.");
+export function landWarnings(land: Land): LandWarning[] {
+  const w: LandWarning[] = [];
+  if (!(land.width > 0) || !(land.length > 0)) w.push("size");
+  if (land.width < 6) w.push("narrow");
+  if (!land.location) w.push("location");
+  if (land.terrain !== "flat" && !land.soil) w.push("soil");
+  if (land.slope > 15) w.push("slope");
+  if (land.roadWidth < 3) w.push("road");
   return w;
 }
