@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
 import { MailCheck } from "lucide-react";
@@ -13,6 +14,7 @@ import { Logo } from "@/components/site/SiteHeader";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 import { DISTRICTS } from "@/lib/buildora/types";
 import { LANGS, langFromProfile, useT, type MsgKey } from "@/lib/i18n";
+import { signInKindError } from "@/lib/account";
 import hero from "@/assets/hero-house.jpg";
 
 type Mode = "signin" | "signup" | "forgot";
@@ -73,22 +75,38 @@ function AuthPage() {
   const [f, setF] = useState<Record<string, string>>({ district: "" });
   const [districts, setDistricts] = useState<string[]>([]);
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const set = (k: string) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value });
   const language = LANGS.find((l) => l.code === lang)?.profile ?? "English";
 
   useEffect(() => { setMode(initial ?? "signin"); }, [initial]);
   useEffect(() => { if (initialKind) setKind(initialKind); }, [initialKind]);
+  // Show who is signed in instead of silently forwarding, so a second account can be used.
+  const [current, setCurrent] = useState<string | null>(null);
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => { if (data.user) navigate({ to: "/dashboard", replace: true }); });
-  }, [navigate]);
+    supabase.auth.getUser().then(({ data }) => setCurrent(data.user?.email ?? null));
+  }, []);
+  const switchAccount = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    setCurrent(null);
+  };
 
   const signIn = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email: (f.email ?? "").trim(), password: f.password ?? "" });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: (f.email ?? "").trim(), password: f.password ?? "" });
     if (error) {
       if (error.code === "invalid_credentials") throw new KeyedError("err_bad_login");
       if (error.code === "email_not_confirmed") throw new KeyedError("err_not_confirmed");
       throw error;
     }
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+    const wrong = signInKindError(kind, (roles ?? []).map((r) => r.role));
+    if (wrong) {
+      await supabase.auth.signOut();
+      throw new KeyedError(wrong);
+    }
+    qc.clear();
     navigate({ to: "/dashboard" });
   };
 
@@ -148,7 +166,16 @@ function AuthPage() {
       <div className="flex flex-col px-6 py-8 sm:px-12">
         <div className="flex items-center justify-between gap-3"><Logo /><LanguageSwitcher /></div>
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
-          {sent ? (
+          {current ? (
+            <div className="text-center animate-rise">
+              <p className="text-muted-foreground">{t("signed_in_as")}</p>
+              <p className="mt-1 break-all font-semibold">{current}</p>
+              <div className="mt-6 flex flex-col gap-3">
+                <Button size="lg" onClick={() => navigate({ to: "/dashboard" })}>{t("go_to_dashboard")}</Button>
+                <Button size="lg" variant="outline" onClick={switchAccount}>{t("use_other_account")}</Button>
+              </div>
+            </div>
+          ) : sent ? (
             <div className="text-center animate-rise">
               <MailCheck className="mx-auto size-12 text-primary" />
               <h1 className="mt-4 text-2xl font-extrabold">{t("confirm_title")}</h1>
