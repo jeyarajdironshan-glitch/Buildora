@@ -10,8 +10,11 @@ export const LANGS: { code: Lang; label: string; short: string; profile: string 
 export const MESSAGES = { en, si, ta } as const;
 const STORAGE_KEY = "buildora-lang";
 
-export function translate(lang: Lang, key: MsgKey): string {
-  return MESSAGES[lang][key] ?? en[key];
+export type Vars = Record<string, string | number>;
+/** Looks up a message and fills `{name}` placeholders from vars. */
+export function translate(lang: Lang, key: MsgKey, vars?: Vars): string {
+  const text = MESSAGES[lang][key] ?? en[key];
+  return vars ? text.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m)) : text;
 }
 export function langFromProfile(value: string | null | undefined): Lang | null {
   return LANGS.find((l) => l.profile === value || l.code === value)?.code ?? null;
@@ -37,7 +40,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
 export function useT() {
   const { lang, setLang } = useContext(I18nContext);
-  const t = useCallback((key: MsgKey) => translate(lang, key), [lang]);
+  const t = useCallback((key: MsgKey, vars?: Vars) => translate(lang, key, vars), [lang]);
   return { t, lang, setLang };
 }
 
